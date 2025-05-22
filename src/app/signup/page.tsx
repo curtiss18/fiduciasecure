@@ -115,7 +115,7 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="">
+        <CardContent>
           {error && (
             <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-md text-sm">
               {error}
@@ -135,7 +135,6 @@ export default function SignupPage() {
                   placeholder="John"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className=""
                   required
                 />
               </div>
@@ -150,7 +149,6 @@ export default function SignupPage() {
                   placeholder="Doe"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className=""
                   required
                 />
               </div>
@@ -166,7 +164,6 @@ export default function SignupPage() {
                 placeholder="advisor@example.com"
                 value={formData.email}
                 onChange={handleChange}
-                className=""
                 required
               />
             </div>
@@ -182,7 +179,6 @@ export default function SignupPage() {
                 placeholder="Acme Financial Advisors"
                 value={formData.companyName}
                 onChange={handleChange}
-                className=""
                 required
               />
             </div>
@@ -198,7 +194,6 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
-                className=""
                 required
                 minLength={8}
               />
@@ -218,7 +213,6 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className=""
                 required
               />
             </div>
@@ -243,10 +237,8 @@ export default function SignupPage() {
             </div>
             <Button
               type="submit"
-              variant="default"
-              size="default"
               className="w-full"
-              disabled={isLoading || socialLoading}
+              disabled={isLoading || !!socialLoading}
             >
               {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
@@ -265,11 +257,10 @@ export default function SignupPage() {
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 
-                size="default"
                 type="button" 
                 className="flex items-center justify-center"
                 onClick={() => handleSocialSignup('google')}
-                disabled={isLoading || socialLoading}
+                disabled={isLoading || !!socialLoading}
               >
                 {socialLoading === 'google' ? (
                   <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
@@ -285,11 +276,10 @@ export default function SignupPage() {
               </Button>
               <Button 
                 variant="outline" 
-                size="default"
                 type="button" 
                 className="flex items-center justify-center"
                 onClick={() => handleSocialSignup('facebook')}
-                disabled={isLoading || socialLoading}
+                disabled={isLoading || !!socialLoading}
               >
                 {socialLoading === 'facebook' ? (
                   <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
