@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase-client";
 
 // Import shadcn components
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/card";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,6 +30,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
+  const supabase = createClient();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,7 +68,8 @@ export default function SignupPage() {
       if (error) {
         setError(error.message);
       } else {
-        alert("Check your email for the confirmation link!");
+        // Redirect to dashboard after successful signup
+        router.push('/dashboard');
       }
     } catch {
       setError("An error occurred during signup. Please try again.");
@@ -82,7 +86,7 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
         }
       });
 
