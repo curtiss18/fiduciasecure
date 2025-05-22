@@ -173,7 +173,7 @@ export default function Home() {
       <section className="py-16 px-6 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-12">
-            Who It's For
+            Who It&apos;s For
           </h2>
           
           <div className="text-left max-w-2xl mx-auto space-y-4">
