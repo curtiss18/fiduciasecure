@@ -17,41 +17,66 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const dynamic = 'force-dynamic'
-
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    companyName: "",
+  });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
+    // Basic validation
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
+      const { error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            company_name: formData.companyName,
+          }
+        }
       });
 
       if (error) {
         setError(error.message);
       } else {
-        router.push('/dashboard');
+        alert("Check your email for the confirmation link!");
       }
     } catch (error) {
-      setError("An error occurred. Please try again.");
+      setError("An error occurred during signup. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  // Handle social login
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+  // Handle social signup
+  const handleSocialSignup = async (provider) => {
     setSocialLoading(provider);
     setError("");
 
@@ -72,8 +97,9 @@ export default function LoginPage() {
       setSocialLoading("");
     }
   };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4 py-8">
       <Link 
         href="/" 
         className="absolute top-8 left-8 flex items-center text-lg font-semibold"
@@ -84,14 +110,14 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Welcome Back
+            Create Your Account
           </CardTitle>
           <CardDescription className="text-center">
-            Sign in to access your advisor dashboard
+            Start your 14-day free trial, no credit card required
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="">
+        <CardContent>
           {error && (
             <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-md text-sm">
               {error}
@@ -99,37 +125,96 @@ export default function LoginPage() {
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="firstName" className="text-sm font-medium">
+                  First Name
+                </label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  placeholder="John"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="lastName" className="text-sm font-medium">
+                  Last Name
+                </label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="advisor@example.com"
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                className=""
+                value={formData.email}
+                onChange={handleChange}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm font-medium">
-                  Password
-                </label>
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
+              <label htmlFor="companyName" className="text-sm font-medium">
+                Firm Name
+              </label>
+              <Input
+                id="companyName"
+                name="companyName"
+                type="text"
+                placeholder="Acme Financial Advisors"
+                value={formData.companyName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Password
+              </label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                className=""
+                value={formData.password}
+                onChange={handleChange}
+                required
+                minLength={8}
+              />
+              <p className="text-xs text-muted-foreground">
+                Must be at least 8 characters
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm Password
+              </label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                value={formData.confirmPassword}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -137,24 +222,30 @@ export default function LoginPage() {
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
-                id="remember"
+                id="terms"
                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                required
               />
-              <label htmlFor="remember" className="text-sm text-muted-foreground">
-                Remember me for 30 days
+              <label htmlFor="terms" className="text-sm text-muted-foreground">
+                I agree to the{" "}
+                <Link href="/terms" className="text-primary hover:underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="text-primary hover:underline">
+                  Privacy Policy
+                </Link>
               </label>
             </div>
-
             <Button
               type="submit"
-              variant="default"
-              size="default"
               className="w-full"
               disabled={isLoading || socialLoading}
             >
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
+
           <div className="mt-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -168,10 +259,9 @@ export default function LoginPage() {
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 
-                size="default"
                 type="button" 
                 className="flex items-center justify-center"
-                onClick={() => handleSocialLogin('google')}
+                onClick={() => handleSocialSignup('google')}
                 disabled={isLoading || socialLoading}
               >
                 {socialLoading === 'google' ? (
@@ -184,14 +274,13 @@ export default function LoginPage() {
                     <path d="M12.0004 24C15.2404 24 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.25 12.0004 19.25C8.87043 19.25 6.22043 17.14 5.27539 14.295L1.28539 17.385C3.25539 21.31 7.31039 24 12.0004 24Z" fill="#34A853"/>
                   </svg>
                 )}
-                {socialLoading === 'google' ? "Signing in..." : "Google"}
+                {socialLoading === 'google' ? "Signing up..." : "Google"}
               </Button>
               <Button 
                 variant="outline" 
-                size="default"
                 type="button" 
                 className="flex items-center justify-center"
-                onClick={() => handleSocialLogin('facebook')}
+                onClick={() => handleSocialSignup('facebook')}
                 disabled={isLoading || socialLoading}
               >
                 {socialLoading === 'facebook' ? (
@@ -201,17 +290,17 @@ export default function LoginPage() {
                     <path fillRule="evenodd" clipRule="evenodd" d="M22 12C22 6.477 17.523 2 12 2S2 6.477 2 12C2 16.991 5.657 21.128 10.438 21.879V14.891H7.898V12H10.438V9.797C10.438 7.291 11.93 5.907 14.215 5.907C15.309 5.907 16.453 6.102 16.453 6.102V8.562H15.193C13.95 8.562 13.563 9.333 13.563 10.124V12H16.336L15.893 14.89H13.563V21.88C18.343 21.129 22 16.99 22 12Z" fill="#1877F2"/>
                   </svg>
                 )}
-                {socialLoading === 'facebook' ? "Signing in..." : "Facebook"}
+                {socialLoading === 'facebook' ? "Signing up..." : "Facebook"}
               </Button>
             </div>
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline">
-              Sign up
+        <CardFooter className="text-center justify-center">
+          <div className="text-sm">
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary hover:underline">
+              Sign in
             </Link>
           </div>
         </CardFooter>
