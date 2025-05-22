@@ -67,7 +67,7 @@ export default function SignupPage() {
       } else {
         alert("Check your email for the confirmation link!");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("An error occurred during signup. Please try again.");
     } finally {
       setIsLoading(false);
@@ -90,7 +90,7 @@ export default function SignupPage() {
         setError("An error occurred. Please try again.");
         setSocialLoading("");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("An error occurred. Please try again.");
       setSocialLoading("");
     }
