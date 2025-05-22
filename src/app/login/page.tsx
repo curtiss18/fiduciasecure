@@ -3,7 +3,7 @@
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import AuthForm from '@/components/AuthForm'
+import AuthForm from '../../components/AuthForm'
 
 export const dynamic = 'force-dynamic'
 
