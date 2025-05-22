@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -18,7 +17,6 @@ import {
 } from "@/components/ui/card";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -31,7 +29,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -39,7 +37,7 @@ export default function SignupPage() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
@@ -69,14 +67,14 @@ export default function SignupPage() {
       } else {
         alert("Check your email for the confirmation link!");
       }
-    } catch (error) {
+    } catch (err) {
       setError("An error occurred during signup. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
   // Handle social signup
-  const handleSocialSignup = async (provider) => {
+  const handleSocialSignup = async (provider: 'google' | 'facebook') => {
     setSocialLoading(provider);
     setError("");
 
@@ -92,7 +90,7 @@ export default function SignupPage() {
         setError("An error occurred. Please try again.");
         setSocialLoading("");
       }
-    } catch (error) {
+    } catch (err) {
       setError("An error occurred. Please try again.");
       setSocialLoading("");
     }
@@ -117,7 +115,7 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="">
           {error && (
             <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-md text-sm">
               {error}
@@ -137,6 +135,7 @@ export default function SignupPage() {
                   placeholder="John"
                   value={formData.firstName}
                   onChange={handleChange}
+                  className=""
                   required
                 />
               </div>
@@ -151,6 +150,7 @@ export default function SignupPage() {
                   placeholder="Doe"
                   value={formData.lastName}
                   onChange={handleChange}
+                  className=""
                   required
                 />
               </div>
@@ -166,6 +166,7 @@ export default function SignupPage() {
                 placeholder="advisor@example.com"
                 value={formData.email}
                 onChange={handleChange}
+                className=""
                 required
               />
             </div>
@@ -181,6 +182,7 @@ export default function SignupPage() {
                 placeholder="Acme Financial Advisors"
                 value={formData.companyName}
                 onChange={handleChange}
+                className=""
                 required
               />
             </div>
@@ -196,6 +198,7 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
+                className=""
                 required
                 minLength={8}
               />
@@ -215,6 +218,7 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                className=""
                 required
               />
             </div>
@@ -239,6 +243,8 @@ export default function SignupPage() {
             </div>
             <Button
               type="submit"
+              variant="default"
+              size="default"
               className="w-full"
               disabled={isLoading || socialLoading}
             >
@@ -259,6 +265,7 @@ export default function SignupPage() {
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 
+                size="default"
                 type="button" 
                 className="flex items-center justify-center"
                 onClick={() => handleSocialSignup('google')}
@@ -278,6 +285,7 @@ export default function SignupPage() {
               </Button>
               <Button 
                 variant="outline" 
+                size="default"
                 type="button" 
                 className="flex items-center justify-center"
                 onClick={() => handleSocialSignup('facebook')}
