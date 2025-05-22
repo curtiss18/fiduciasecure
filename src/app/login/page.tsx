@@ -43,7 +43,7 @@ export default function LoginPage() {
       } else {
         router.push('/dashboard');
       }
-    } catch (_err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
@@ -67,7 +67,7 @@ export default function LoginPage() {
         setError("An error occurred. Please try again.");
         setSocialLoading("");
       }
-    } catch (_err) {
+    } catch {
       setError("An error occurred. Please try again.");
       setSocialLoading("");
     }
