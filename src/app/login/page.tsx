@@ -1,10 +1,9 @@
 'use client'
 
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import AuthForm from '@/components/AuthForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,14 +28,7 @@ export default function Login() {
             Sign in to FiduciaSecure
           </h2>
         </div>
-        <div className="bg-white p-8 rounded-lg shadow">
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            providers={['google', 'github']}
-            redirectTo={`${window.location.origin}/auth/callback`}
-          />
-        </div>
+        <AuthForm />
       </div>
     </div>
   )
