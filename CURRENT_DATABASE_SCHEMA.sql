@@ -1,6 +1,7 @@
 -- =============================================
 -- FIDUCIASECURE CURRENT DATABASE STATE
--- Last Updated: May 2025
+-- Version: 1.2.0
+-- Last Updated: May 23, 2025
 -- =============================================
 
 -- IMPLEMENTED TABLES
