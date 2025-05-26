@@ -18,6 +18,7 @@ npm run lint
 ```
 
 ## Key Files to Reference
+- `CONTEXT_PROMPT.md` - Claude session starter prompt (copy/paste for new sessions)
 - `PROJECT_DOCUMENTATION.md` - Comprehensive project overview
 - `CURRENT_DATABASE_SCHEMA.sql` - Current database state
 - `src/types/database.types.ts` - TypeScript type definitions
@@ -49,7 +50,7 @@ npm run lint
 5. **Compliance**: Built for SOC 2, SEC/FINRA requirements
 
 ## When Starting New Conversation
-1. Provide the context prompt from `fiducia-context-prompt`
+1. Copy/paste the entire content from `CONTEXT_PROMPT.md`
 2. Mention current working area
 3. Reference any specific files if needed
 4. Specify what feature to work on next
