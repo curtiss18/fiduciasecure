@@ -14,15 +14,21 @@ export function useAdvisorProfile() {
     try {
       setLoading(true);
       
-      // Option 1: Direct query
-      const { data, error } = await supabase
-        .from('advisor_profiles')
+      // Try the new table name first, fallback to old name during migration
+      let { data, error } = await supabase
+        .from('representatives')
         .select('*')
         .single();
-
-      // Option 2: Using the helper function
-      // const { data, error } = await supabase
-      //   .rpc('get_current_advisor_profile');
+        
+      // If representatives table doesn't exist yet, try the old table name
+      if (error && error.message.includes('relation "public.representatives" does not exist')) {
+        const fallback = await supabase
+          .from('advisor_profiles')
+          .select('*')
+          .single();
+        data = fallback.data;
+        error = fallback.error;
+      }
 
       if (error) throw error;
       
@@ -48,12 +54,25 @@ export function useAdvisorProfile() {
 
   const updateProfile = async (updates: Partial<AdvisorProfile>) => {
     try {
-      const { data, error } = await supabase
-        .from('advisor_profiles')
+      // Try the new table name first, fallback to old name during migration
+      let { data, error } = await supabase
+        .from('representatives')
         .update(updates)
         .eq('id', profile?.id)
         .select()
         .single();
+        
+      // If representatives table doesn't exist yet, try the old table name
+      if (error && error.message.includes('relation "public.representatives" does not exist')) {
+        const fallback = await supabase
+          .from('advisor_profiles')
+          .update(updates)
+          .eq('id', profile?.id)
+          .select()
+          .single();
+        data = fallback.data;
+        error = fallback.error;
+      }
 
       if (error) throw error;
       setProfile(data);

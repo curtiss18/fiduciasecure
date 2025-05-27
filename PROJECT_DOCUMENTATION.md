@@ -10,7 +10,7 @@
 - v1.0.0 - Initial implementation with advisor profiles
 
 ## Project Overview
-FiduciaSecure is a secure client onboarding and data management platform designed specifically for independent financial advisors (IARs). The platform helps advisors collect, manage, and maintain client information while ensuring regulatory compliance.
+FiduciaSecure is a secure client onboarding and data management platform designed for independent financial advisors and representatives (IARs). The platform helps representatives collect, manage, and maintain client information while ensuring regulatory compliance. Representatives can work independently or as part of larger advisory firms.
 
 ## Technical Stack
 - **Framework**: Next.js 15.3.2 with App Router
@@ -24,11 +24,27 @@ FiduciaSecure is a secure client onboarding and data management platform designe
 
 ### Implemented Tables
 
-#### advisor_profiles
+#### advisors (Optional parent entities)
 ```sql
-advisor_profiles {
-  id: uuid (PK, FK to auth.users)
+advisors {
+  id: uuid (PK)
   firm_name: text
+  firm_crd_number: text (unique)
+  primary_contact_email: text
+  phone: text
+  address: jsonb -- {line1, line2, city, state, zip, country}
+  settings: jsonb -- {email_notifications, timezone, default_compliance_email}
+  created_at: timestamp
+  updated_at: timestamp
+}
+```
+
+#### representatives (Primary user entities - can be independent or linked to advisors)
+```sql
+representatives {
+  id: uuid (PK, FK to auth.users)
+  advisor_id: uuid (FK to advisors) -- NULL for independent representatives
+  firm_name: text -- For independent reps only (NULL if linked to advisor)
   crd_number: text (unique)
   registration_states: text[] -- Array of state codes
   compliance_email: text
@@ -40,13 +56,19 @@ advisor_profiles {
 }
 ```
 
+**Key Architecture Principles:**
+- **Representatives are the primary users** - they can sign up and use the platform independently
+- **Advisors are optional** - representatives can work independently or be part of a larger firm
+- **Flexible firm management** - independent reps manage their own firm info, advisor-linked reps inherit from advisors table
+- **Seamless transition** - independent reps can later join advisor firms without data loss
+
 ### Planned Tables (Designed but not yet implemented)
 
-#### clients
+#### clients (PLANNED - updated hierarchy)
 ```sql
 clients {
   id: uuid (PK)
-  advisor_id: uuid (FK to advisor_profiles)
+  representative_id: uuid (FK to representatives) -- Changed from advisor_id
   client_number: text (unique, auto-generated)
   client_type: enum ('individual', 'joint')
   status: enum ('prospect', 'onboarding', 'active', 'inactive')
@@ -98,22 +120,28 @@ contacts {
 1. **Authentication System**
    - User signup/login via Supabase Auth
    - Protected routes with middleware
-   - Automatic profile creation on signup
+   - Automatic representative profile creation on signup
    - Session management
 
-2. **Advisor Dashboard**
+2. **Representative Dashboard**
    - Modern card-based layout
-   - Profile display with inline editing
+   - Profile display with inline editing for independent and advisor-linked reps
+   - Adaptive UI showing "Practice" vs "Firm" based on independence status
+   - Independent representative badge display
    - Quick stats placeholders (clients, onboarding, reviews)
    - Quick actions for common tasks
    - Activity feed structure
 
-3. **Profile Management**
+3. **Flexible Profile Management**
    - Comprehensive profile editing form in modal
    - Multi-state registration support with custom MultiSelect component
    - Full address management (line1, line2, city, state, zip)
    - Settings management (notifications, 2FA, default views, timezone)
-   - CRD number and firm information
+   - CRD number and individual representative information
+   - **Independent vs Advisor-linked support:**
+     - Independent reps can manage their own firm name
+     - Advisor-linked reps inherit firm info from advisors table
+     - Intelligent form handling based on representative type
    - Real-time validation and error handling
    - Success feedback on save
 
@@ -126,7 +154,7 @@ contacts {
    - Consistent Tailwind CSS v4 styling throughout
 
 5. **Data Management**
-   - useAdvisorProfile hook for profile CRUD operations
+   - useAdvisorProfile hook for representative CRUD operations (maintains legacy naming)
    - Proper TypeScript types for all entities
    - Error handling and loading states
    - Optimistic updates with refetch capability
@@ -191,7 +219,7 @@ Forms are purely UI components that collect data for normalized database tables.
    - Compliance review workflows
 
 ## Current State Summary
-The application now has a complete advisor profile system with authentication, dashboard, and profile management. The UI component library is established with all basic components needed. The database architecture is fully designed and ready for the next phase of implementation. All TypeScript types are defined and the codebase is clean with no linting errors.
+The application now has a complete representative profile system with authentication, dashboard, and flexible profile management supporting both independent representatives and advisor-linked representatives. The UI component library is established with all basic components needed. The database architecture supports the full hierarchy: Advisors (optional) → Representatives (primary users) → Clients → Contacts. All TypeScript types are defined and the codebase is clean with no linting errors.
 
 ## File Structure
 ```

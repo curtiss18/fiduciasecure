@@ -8,6 +8,7 @@ import { Modal } from '@/components/ui/modal'
 import { ProfileEditForm } from '@/components/ProfileEditForm'
 import type { User } from '@supabase/supabase-js'
 import type { AdvisorProfile } from '@/types/database.types'
+import { getEffectiveFirmName, isIndependentRepresentative } from '@/types/database.types'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,7 +40,16 @@ export default function Dashboard() {
   }
 
   const handleProfileUpdate = async (updates: Partial<AdvisorProfile>) => {
-    const result = await updateProfile(updates)
+    // For independent representatives, allow firm_name updates
+    // For representatives linked to advisors, filter out firm_name (managed at advisor level)
+    const updatesForRep = profile && isIndependentRepresentative(profile) 
+      ? updates // Keep all fields including firm_name for independent reps
+      : (() => { 
+          const { firm_name, ...filteredUpdates } = updates; 
+          return filteredUpdates; 
+        })(); // Filter out firm_name for advisor-linked reps
+    
+    const result = await updateProfile(updatesForRep)
     if (!result.error) {
       await refetch() // Refresh the profile data
     }
@@ -86,8 +96,15 @@ export default function Dashboard() {
             </div>
             <div className="space-y-2 text-sm">
               <div>
-                <span className="font-medium text-gray-500">Firm:</span>{' '}
-                <span className="text-gray-900">{profile?.firm_name || 'Not set'}</span>
+                <span className="font-medium text-gray-500">
+                  {isIndependentRepresentative(profile) ? 'Practice:' : 'Firm:'}
+                </span>{' '}
+                <span className="text-gray-900">{getEffectiveFirmName(profile) || 'Not set'}</span>
+                {isIndependentRepresentative(profile) && (
+                  <span className="ml-2 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                    Independent
+                  </span>
+                )}
               </div>
               <div>
                 <span className="font-medium text-gray-500">CRD #:</span>{' '}
@@ -159,7 +176,7 @@ export default function Dashboard() {
       <Modal
         isOpen={showProfileModal}
         onClose={() => setShowProfileModal(false)}
-        title="Edit Advisor Profile"
+        title={isIndependentRepresentative(profile) ? "Edit Representative Profile" : "Edit Representative Profile"}
       >
         <ProfileEditForm
           profile={profile}

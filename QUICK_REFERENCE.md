@@ -32,10 +32,11 @@ npm run lint
 
 ## Current Working Areas
 - ✅ Authentication system (complete)
-- ✅ Advisor profiles with multi-state registration (complete)
-- ✅ Dashboard and profile editing (complete)
+- ✅ Representatives with independence support (complete)
+- ✅ Advisors table for optional firm entities (complete)
+- ✅ Dashboard with adaptive UI (complete)
 - ✅ UI component library (foundational components done)
-- 🔲 Clients table and management
+- 🔲 Clients table implementation (needs update for representative_id)
 - 🔲 Contact management for clients
 - 🔲 Client onboarding forms
 - 🔲 Document upload system
@@ -43,11 +44,12 @@ npm run lint
 - 🔲 Reporting and analytics
 
 ## Design Decisions Summary
-1. **Database**: Normalized structure, no JSON form storage
-2. **Security**: RLS on all tables, encryption for PII
-3. **UI**: Reusable components, Tailwind CSS
-4. **Forms**: UI layer only, data goes to proper tables
-5. **Compliance**: Built for SOC 2, SEC/FINRA requirements
+1. **Database**: Representatives are primary users, advisors are optional
+2. **Independence**: Representatives can work independently or with advisory firms
+3. **Security**: RLS on all tables, encryption for PII
+4. **UI**: Adaptive components, "Practice" vs "Firm" terminology
+5. **Forms**: UI layer only, data goes to proper tables
+6. **Compliance**: Built for SOC 2, SEC/FINRA requirements
 
 ## When Starting New Conversation
 1. Copy/paste the entire content from `CONTEXT_PROMPT.md`

@@ -17,21 +17,21 @@ Always consider security implications first:
 - **Regulatory Compliance**: SEC/FINRA and SOC 2 requirements
 
 ## Project Overview
-**FiduciaSecure** is a secure client onboarding and data management platform for independent financial advisors (IARs). We're building a comprehensive platform that handles sensitive financial data with enterprise-grade security.
+**FiduciaSecure** is a secure client onboarding and data management platform for independent financial advisors and representatives (IARs). We're building a comprehensive platform that handles sensitive financial data with enterprise-grade security. Representatives can work independently or as part of larger advisory firms.
 
 **Tech Stack**: Next.js 15.3.2, TypeScript, Supabase (PostgreSQL), Tailwind CSS v4
 
-## Current State (v1.2.0)
+## Current State (v1.3.0)
 ### ✅ IMPLEMENTED
-- **Authentication system** (Supabase Auth with automatic profile creation)
-- **Advisor profiles** (complete with multi-state registration, address, settings)
-- **Dashboard** (modern card layout with profile editing modal)
+- **Authentication system** (Supabase Auth with automatic representative profile creation)
+- **Flexible representative profiles** (independent and advisor-linked support)
+- **Adaptive dashboard** (shows "Practice" vs "Firm" based on independence status)
 - **UI component library** (Button, Card, Input, Select, Modal, MultiSelect, etc.)
-- **Database foundation** (advisor_profiles table with RLS, triggers, proper indexing)
-- **TypeScript architecture** (comprehensive typing, custom hooks)
+- **Database foundation** (advisors and representatives tables with proper relationships)
+- **TypeScript architecture** (comprehensive typing with helper functions)
 
 ### 🎯 NEXT PRIORITIES
-1. **Clients table implementation** (database design complete, ready to build)
+1. **Clients table implementation** (update to link to representatives, not advisors)
 2. **Client management system** (CRUD operations, list views)
 3. **Client onboarding forms** (contact info, financial profiles, risk assessment)
 4. **Document upload system** (secure file storage)
