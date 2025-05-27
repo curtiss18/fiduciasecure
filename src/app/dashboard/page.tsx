@@ -45,6 +45,7 @@ export default function Dashboard() {
     const updatesForRep = profile && isIndependentRepresentative(profile) 
       ? updates // Keep all fields including firm_name for independent reps
       : (() => { 
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { firm_name, ...filteredUpdates } = updates; 
           return filteredUpdates; 
         })(); // Filter out firm_name for advisor-linked reps
@@ -97,10 +98,10 @@ export default function Dashboard() {
             <div className="space-y-2 text-sm">
               <div>
                 <span className="font-medium text-gray-500">
-                  {isIndependentRepresentative(profile) ? 'Practice:' : 'Firm:'}
+                  {profile && isIndependentRepresentative(profile) ? 'Practice:' : 'Firm:'}
                 </span>{' '}
-                <span className="text-gray-900">{getEffectiveFirmName(profile) || 'Not set'}</span>
-                {isIndependentRepresentative(profile) && (
+                <span className="text-gray-900">{profile ? getEffectiveFirmName(profile) || 'Not set' : 'Not set'}</span>
+                {profile && isIndependentRepresentative(profile) && (
                   <span className="ml-2 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
                     Independent
                   </span>

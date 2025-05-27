@@ -66,7 +66,9 @@ export interface RepresentativeWithAdvisor extends Representative {
 }
 
 // Helper functions for working with representatives
-export const getEffectiveFirmName = (representative: RepresentativeWithAdvisor): string | null => {
+export const getEffectiveFirmName = (representative: RepresentativeWithAdvisor | null): string | null => {
+  if (!representative) return null;
+  
   // If linked to an advisor, use the advisor's firm name
   if (representative.advisor_id && representative.advisor) {
     return representative.advisor.firm_name;
@@ -75,6 +77,7 @@ export const getEffectiveFirmName = (representative: RepresentativeWithAdvisor):
   return representative.firm_name;
 };
 
-export const isIndependentRepresentative = (representative: Representative): boolean => {
+export const isIndependentRepresentative = (representative: Representative | null): boolean => {
+  if (!representative) return false;
   return representative.advisor_id === null;
 };
